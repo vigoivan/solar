@@ -185,7 +185,7 @@ def enter1():  #funcion del boton enter, valida entrada
             texto7=Label(raiz,text=str(round(mesesprom[i],1))+" hs solares diarias equivalentes")
             texto7.grid(row=5+i,column=1,sticky="w")
         plt.clf()
-        plt.title("horas solares promedio por dia con 90ª de incidencia")
+        plt.title("horas solares promedio por dia equivalente a hs con 90ª de incidencia")
         plt.barh(invertirlista(mesesdelaño),invertirlista(mesesprom))
         plt.grid(axis = 'x', color = 'gray', linestyle = 'dashed')
         plt.xticks(np.arange(0,10,0.5))  
@@ -226,7 +226,7 @@ entradadetexto1=Entry(raiz,textvariable=valor1)
 entradadetexto1.grid(row=1,column=1,pady=10)
 
 valor2=StringVar()
-valor2.set("30.00")
+valor2.set("0.00")
 entradadetexto2=Entry(raiz,textvariable=valor2)
 entradadetexto2.grid(row=2,column=1,pady=10)
 
