@@ -3,8 +3,6 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
-
-
 def hipotenusaxy(x,y):
    i= math.sqrt(x*x+y*y)
    return i
@@ -66,7 +64,7 @@ class punto():
     def modulo(self):
         u=self.x*self.x+self.y*self.y+self.z*self.z 
         return math.sqrt(u)
-    def angulo2(self,inclinacion):
+    def angulo(self,inclinacion):
         i=self.x*inclinacion.x+self.y*inclinacion.y+self.z*inclinacion.z
         u=self.modulo()*inclinacion.modulo()
         return math.acos(i/u)
@@ -75,7 +73,7 @@ class punto():
 
 def calcular(paralelo,inclinacion1,inclinacion2):
     mesespromedio=[]
-    auxdia=diadelaño(0,0,0)
+ #  auxdia=diadelaño(0,0,0)
     tropico =23 +26/60 +14/3600
     b=punto()
     a=punto()
@@ -110,17 +108,17 @@ def calcular(paralelo,inclinacion1,inclinacion2):
                 b.rotatexz(0.25 * minutosdeldia)
                 e.rotatexz(0.25* minutosdeldia-inclinacion2)
                 c.rotateyz(-angulo_diario)
-                aux2radianes=e.angulo2(c)
+                aux2radianes=e.angulo(c)
                 aux2=(aux2radianes*180/math.pi)
-                aux=b.angulo2(c)*180/math.pi
+                aux=b.angulo(c)*180/math.pi
                 if ((aux < 90.0) and not amanecio):
                     amanecio = True
-                    auxdia.amanece=60*hora+minuto*1
-                    auxdia.dia=dia
+                #   auxdia.amanece=60*hora+minuto*1
+                #   auxdia.dia=dia
                 if amanecio and aux > 90.0 and not anochece:
                     anochece =True
-                    auxdia.anochece=hora*60+minuto*1
-                    auxdia.dif=auxdia.anochece-auxdia.amanece
+                 #  auxdia.anochece=hora*60+minuto*1
+                 #  auxdia.dif=auxdia.anochece-auxdia.amanece
                 if aux2<90 and amanecio and not anochece:
                     luzsolardiaria += math.cos(aux2radianes)/60            
         luzsolaranual += luzsolardiaria
@@ -135,75 +133,54 @@ def invertirlista(list):
         listaux.append(list[largodelista-i-1])
     return listaux
 
-def enter1():  #funcion del boton enter, valida entrada
+def borrado():
+    for i in range(4,17):   #borrado de meses y datos
+        texto4=Label(raiz,text="                                                           ")
+        texto4.grid(row=i,column=0)
+        texto4=Label(raiz,text="                                                           ")
+        texto4.grid(row=i,column=1)
+
+
+def enter():  #funcion del boton enter, valida entrada
     mesesdelaño=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","nobiembre","diciembre"]
-    global i
-    global texto3
-    global texto4
-    global texto5
-    global texto6
-    global texto7
-    global booltexto3
-    global booltexto4
-    global booltexto5
-    global booltexto6
-    global booltexto7 
-    if booltexto3:
-        texto3.destroy()
-    if booltexto4:
-        texto4.destroy()
-    if booltexto5:
-        texto5.destroy()
-    if booltexto6:
-        texto6.destroy()
-    if booltexto7:
-        texto7.destroy()
+    borrado()
+    try:
+        paralelo=float(valor.get())
+        inclinacion1=float(valor1.get())
+        inclinacion2=float(valor2.get())
+    except:
+        texto=Label(raiz,text=" revisa los datos ingresados ")
+        texto.grid(row=4,column=0,columnspan=2)
+    else:
+        if paralelo>90:
+            texto=Label(raiz,text="Introduzca un valor de latitud menor a 90º")
+            texto.grid(row=4,column=0,columnspan=2)
+        if inclinacion1>180:
+            texto=Label(raiz,text="Introduzca un valor de inclinacion norte menor a 180º")
+            texto.grid(row=5,column=0,columnspan=2)
+        if inclinacion2>180:
+            texto=Label(raiz,text="Introduzca un valor de inclinacion al este menor a 180º")
+            texto.grid(row=6,column=0,columnspan=2)
+        if paralelo<=90 and inclinacion1<=180 and inclinacion2<180:
+            horasanuales,mesesprom=calcular(paralelo,inclinacion1,inclinacion2)
+            texto=Label(raiz,text="horas solares al año equivalentes a hs con incidencia a 90ª: "+str(horasanuales))
+            texto.grid(row=4,column=0,columnspan=2,sticky="w")
+            for i in range(12): 
+                texto=Label(raiz,text=mesesdelaño[i])
+                texto.grid(row=5+i,column=0,sticky="w")
+                texto=Label(raiz,text=str(round(mesesprom[i],1))+" hs solares diarias equivalentes")
+                texto.grid(row=5+i,column=1,sticky="w")
+            plt.clf()
+            plt.title("horas solares promedio por dia equivalentes con 90ª de incidencia")
+            plt.barh(invertirlista(mesesdelaño),invertirlista(mesesprom))
+            plt.grid(axis = 'x', color = 'gray', linestyle = 'dashed')
+            plt.xticks(np.arange(0,10,0.5))  
+            plt.show()
 
 
-    paralelo=float(valor.get())
-    inclinacion1=float(valor1.get())
-    inclinacion2=float(valor2.get())
-    if paralelo>90:
-        texto4=Label(raiz,text="Introduzca un valor de latitud menor a 90º")
-        texto4.grid(row=4,column=0,columnspan=2)
-        booltexto4=True
-    if inclinacion1>180:
-        texto5=Label(raiz,text="Introduzca un valor de \ninclinacion norte menor a 180º")
-        texto5.grid(row=5,column=0,columnspan=2)
-        booltexto5=True
-    if inclinacion2>180:
-        texto6=Label(raiz,text="Introduzca un valor de \ninclinacion al este menor a 180º")
-        texto6.grid(row=6,column=0,columnspan=2)
-        booltexto6=True
-    if paralelo<=90 and inclinacion1<=180 and inclinacion2<180:
-        horasanuales,mesesprom=calcular(paralelo,inclinacion1,inclinacion2)
-        texto3=Label(raiz,text="horas solares al año equivalentes a \nhoras con incidencia a 90ª:  "+str(horasanuales))
-        texto3.grid(row=4,column=1)
-        for i in range(12):
-            texto7=Label(raiz,text=mesesdelaño[i])
-            texto7.grid(row=5+i,column=0,sticky="w")
-            texto7=Label(raiz,text=str(round(mesesprom[i],1))+" hs solares diarias equivalentes")
-            texto7.grid(row=5+i,column=1,sticky="w")
-        plt.clf()
-        plt.title("horas solares promedio por dia equivalente a hs con 90ª de incidencia")
-        plt.barh(invertirlista(mesesdelaño),invertirlista(mesesprom))
-        plt.grid(axis = 'x', color = 'gray', linestyle = 'dashed')
-        plt.xticks(np.arange(0,10,0.5))  
-
-        plt.show()
-        booltexto7=True
-        booltexto3=True
-
-
-
-booltexto3=False
-booltexto4=False
-booltexto5=False
-booltexto6=False
-booltexto7=False
 raiz=Tk()
 raiz.title("solar")
-raiz.geometry("350x500")
+raiz.geometry("380x500")
 raiz.resizable(0,0)
 
 texto=Label(raiz,text="introduzca latitud:")
@@ -216,7 +193,7 @@ texto2=Label(raiz,text="introduzca inclinacion\n respecto al este:")
 texto2.grid(row=2,column=0)
 
 valor=StringVar()
-valor.set("35.00")
+valor.set("35.00")  # latitud de buenos aires
 entradadetexto=Entry(raiz,textvariable=valor)
 entradadetexto.grid(row=0,column=1,pady=10)
 
@@ -230,8 +207,9 @@ valor2.set("0.00")
 entradadetexto2=Entry(raiz,textvariable=valor2)
 entradadetexto2.grid(row=2,column=1,pady=10)
 
-boton=Button(raiz,text="ENTER",command= enter1)
+boton=Button(raiz,text="ENTER",command= enter)
 boton.grid(row=3,column=1,pady=10)
+borrado()
 raiz.mainloop()
 
 
